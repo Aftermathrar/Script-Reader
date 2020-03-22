@@ -115,11 +115,14 @@ Private Sub FindResponseMaximums( _
         If Left(srcText(i), 5) = "label" Then
             lblGroup = Mid(srcText(i), 7, InStr(srcText(i), ":"))
         ElseIf Left(LTrim(srcText(i)), 4) = "menu" Then
+                    'Save indent level and toggle isInMenu
             iMenuGroup = indentGroup(i)
             isInMenu = True
+                    'If first non-Space character is a quote, ends in a colon, and we are in a menu, log menu choice
         ElseIf Left(LTrim(srcText(i)), 1) = Chr(34) And Right(RTrim(srcText(i)), 1) = Chr(58) And isInMenu Then
             iStrSearch = 1 + InStr(srcText(i), Chr(34))
             menuGroup = Mid(srcText(i), iStrSearch, InStr(iStrSearch, srcText(i), Chr(34)) - iStrSearch)
+                    'If line starts with a conditional, log the first variable and equality check/value
         ElseIf Left(LTrim(srcText(i)), 2) = "if" Then
             iStrSearch = 1 + indentGroup(i) * 4 + 3  'Indent group spacing, "if " spacing, plus one
             iStrSearchEnd = MultiInStr(iStrSearch, srcText(i))
@@ -127,6 +130,7 @@ Private Sub FindResponseMaximums( _
             iStrSearch = 1 + iStrSearchEnd
             val = Mid(srcText(i), iStrSearch, InStr(iStrSearch, srcText(i), ":") - iStrSearch)
             If Left(val, 1) = "=" Then val = "'" & val
+                        'If description following conditional is not defined, log the parameters
         ElseIf InStr(srcText(i), "not defined") > 0 Then
             'Check for duplicate record
             If hasUndefinedValue Then
@@ -148,6 +152,7 @@ Private Sub FindResponseMaximums( _
                 
                 hasUndefinedValue = True
             End If
+                            'Check if we're out of the menu indent level, currently doesn't handle nested menus
         ElseIf isInMenu Then
             If indentGroup(i) <= iMenuGroup Then
                 isInMenu = False
