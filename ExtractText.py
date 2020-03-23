@@ -12,7 +12,6 @@ if len(file_path) == 0:
 outData = dict()
 outData["_header"] = "Script,Label,Menu,Variable,Lowest Undefined Comment"
 
-
 # Function to find first occurrence of multiple string checks
 # idk where to put this in the script
 def MultiInStr(searchText):
@@ -46,7 +45,7 @@ for file_name in os.listdir(file_path):
 
     count = 0
     isInMenu = False
-    seperator = ","
+    separator = ","
 
     labelName = ""
     menuName = ""
@@ -72,7 +71,7 @@ for file_name in os.listdir(file_path):
         elif line.find("not defined") > 0:
             #Check for duplicate record
             tempKey = (file_name, labelName, menuName, varName)
-            if not (seperator.join(tempKey) in outData):
+            if not (separator.join(tempKey) in outData):
                 outData[tempKey] = file_name[:len(file_name) - 4] + "," + labelName + "," + menuName + "," + varName + "," + eqVal
         elif isInMenu:
             if indentGroup[count] <= menuGroup:
